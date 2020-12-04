@@ -1,7 +1,7 @@
-import src.help_funcions
+from src.help_funcions import get_ind_population
 from src.cannibalist import Cannibalist
 from src.regular import Regular
-import src.graphs
+import src.graphs as graphs
 import random
 import numpy as np
 import copy
@@ -33,9 +33,9 @@ def main():
         random.shuffle(population)
 
         #save nr_cannibalists, save nr_regulars
-        nr_cannibalists, nr_regulars = get_ind_population(population)
-        nr_cannibists.append(nr_cannibalists)
-        nr_regulars.append(nr_regulars)
+        nr_can, nr_reg = get_ind_population(population)
+        nr_cannibalists.append(nr_can)
+        nr_regulars.append(nr_reg)
 
         # Interaction between individuals
         if len(population) % 2 == 0: # if population is even
