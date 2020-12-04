@@ -29,13 +29,13 @@ class BaseAgent:
         if r < self.fighting_capability/total_cap:
             # self wins
             energy_cost = self.fighting_energy_cost_base - capability_cost
-            self.energy -= energy_cost
+            self.change_energy(-energy_cost)
             other.alive = False
             return True
         else:
             # other wins
             energy_cost = self.fighting_energy_cost_base + capability_cost
-            other.energy -= energy_cost
+            other.change_energy(energy_cost)
             self.alive = False
             return False
 
@@ -62,7 +62,7 @@ class BaseAgent:
         return 0, other
 
     def eat(self, food_energy):
-        self.energy += food_energy
+        self.change_energy(food_energy)
 
     def cannibalise(self, others_energy):
         # Assumes base case is not to cannibalise
@@ -75,3 +75,6 @@ class BaseAgent:
         else:
             new_individual = type(other)(other.u)
         return new_individual
+
+    def change_energy(self, amount)
+        self.energy += int
