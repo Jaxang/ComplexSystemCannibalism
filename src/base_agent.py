@@ -35,7 +35,7 @@ class BaseAgent:
         else:
             # other wins
             energy_cost = self.fighting_energy_cost_base + capability_cost
-            other.change_energy(energy_cost)
+            other.change_energy(-energy_cost)
             self.alive = False
             return False
 
@@ -76,5 +76,5 @@ class BaseAgent:
             new_individual = type(other)(other.u)
         return new_individual
 
-    def change_energy(self, amount)
-        self.energy += int
+    def change_energy(self, amount):
+        self.energy += amount
