@@ -39,6 +39,7 @@ class BaseAgent:
             self.alive = False
             return False
 
+    #other should be returned aswell!
     def interact(self, other):
         """returns
         - 0  if both survive
@@ -49,16 +50,16 @@ class BaseAgent:
         r = random.random()
         if self.energy > self.mating_energy*self.energy_max and other.energy > other.mating_energy*other.energy_max:
             # Mate
-            return 3
+            return 3, other
         elif r < self.u or r < other.u:
             outcome = self.fight(other)
             if outcome:
                 self.cannibalise(other.energy)
-                return 1
+                return 1, other
             else:
                 other.cannibalise(self.energy)
-                return 2
-        return 0
+                return 2, other
+        return 0, other
 
     def eat(self, food_energy):
         self.energy += food_energy
