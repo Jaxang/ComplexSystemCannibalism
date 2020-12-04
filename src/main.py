@@ -27,15 +27,17 @@ if __name__ == '__main__':
 
     # main code 
     for i in range(nr_time_steps):
-        temp_population = np
+        new_population = list()
         random.shuffle(population)
+
         if len(population) % 2 == 0: # if population is even
             for j  in range(0,len(population), 2):
                 return_code = population[j].tournament(population[j+1]) # 0 both survive, 1 - other dies, 2 self dies 3 - reproduce
+                
                 if return_code == 1:
-                    population.remove(j+1)
+                    new_population.append(j+1)
                 if return_code == 2:
-                    population.remove(j)
+                    temp_list.append(j)
                 if return_code == 3:
                     if type(population[j]) == Cannibalist:
                         cannibal = Cannibalist(0.1)
