@@ -1,10 +1,19 @@
 from base_agent import BaseAgent
+from regular import Regular
 
 
-class OtherAgenttype1(BaseAgent): 
+class Cannibalist(BaseAgent): 
 
     def test(self, opponent):
-        print(type(opponent) == OtherAgenttype1)
-        a = 5
-        b = 5   
         
+        if type(opponent) == Cannibalist:
+            pass
+            # Eat eachother?
+        
+        if type(oppenent) == Regular:
+            pass
+            # ??
+        
+
+       
+   
