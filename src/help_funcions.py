@@ -1,3 +1,4 @@
-def helper_function(population):
-    len(population)
-    pass
+def get_ind_population(population):
+    population_size = len(population)
+    for i in range(population_size)
+        if(population[i].test)
