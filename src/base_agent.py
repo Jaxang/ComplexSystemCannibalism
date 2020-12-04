@@ -11,6 +11,7 @@ class BaseAgent:
     energy_from_cannibalising = 10
     energy_retained_when_cannibalising = 0.5
     mating_energy = 0.5
+    mating_cost = 0.3
 
     def __init__(self, u):
         self.energy_max = 100
@@ -74,7 +75,9 @@ class BaseAgent:
             new_individual = type(self)(self.u)
         else:
             new_individual = type(other)(other.u)
+        self.change_energy(-self.mating_cost*self.energy_max)
+        other.change_energy(-other.mating_cost * other.energy_max)
         return new_individual
 
     def change_energy(self, amount):
-        self.energy += amount
+        self.energy = min(self.energy + amount, self.energy_max)

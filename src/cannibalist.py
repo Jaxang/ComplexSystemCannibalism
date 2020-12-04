@@ -1,5 +1,4 @@
-from .base_agent import BaseAgent
-from .regular import Regular
+from src.base_agent import BaseAgent
 import random
 
 
