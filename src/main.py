@@ -1,7 +1,7 @@
-import help_funcions
-from cannibalist import Cannibalist
-from regular import Regular
-import graphs
+import src.help_funcions
+from src.cannibalist import Cannibalist
+from src.regular import Regular
+import src.graphs
 import random
 import numpy as np
          
