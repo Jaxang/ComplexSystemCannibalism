@@ -1,19 +1,9 @@
-from base_agent import BaseAgent
-from regular import Regular
+from src.base_agent import BaseAgent
+import random
 
 
-class Cannibalist(BaseAgent): 
+class Cannibalist(BaseAgent):
 
-    def test(self, opponent):
-        
-        if type(opponent) == Cannibalist:
-            pass
-            # Eat eachother?
-        
-        if type(oppenent) == Regular:
-            pass
-            # ??
-        
-
-       
-   
+    def cannibalise(self, others_energy):
+        # factor find in literature how much we can maintain of others energy
+        self.change_energy(others_energy * self.energy_retained_when_cannibalising)

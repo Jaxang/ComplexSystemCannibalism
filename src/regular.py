@@ -1,11 +1,4 @@
-from base_agent import BaseAgent
-from cannibalist import Cannibalist
+from src.base_agent import BaseAgent
 
 class Regular(BaseAgent):
-    
-    def test(self):
-        if type(opponent) == Cannibalist:
-            pass
-
-        if type(opponent) == Regular:
-            pass
+    pass
