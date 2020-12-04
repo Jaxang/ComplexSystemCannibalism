@@ -1,0 +1,11 @@
+import matplotlib.pyplot as plt 
+
+def plot_nr(nr_can, nr_reg):
+    plt.figure()
+    plt.plot(nr_can, 'r', label = "Cannibalist")
+    plt.plot(nr_reg, 'b', label = "Regular")
+    plt.legend()
+    plt.xlabel("time step")
+    plt.ylabel("population size")
+    plt.title("Population size")
+    plt.show()

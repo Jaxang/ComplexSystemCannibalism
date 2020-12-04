@@ -14,6 +14,7 @@ if __name__ == '__main__':
     regulars = list()
     population = list()
     nr_time_steps = 1000
+    metabolism = -4
 
     # initialize population
     for i in range(ind_population):
@@ -30,26 +31,48 @@ if __name__ == '__main__':
         new_population = list()
         random.shuffle(population)
 
+        #TODO: plot size of 
+
+        # Interaction between individuals
         if len(population) % 2 == 0: # if population is even
             for j  in range(0,len(population), 2):
-                return_code = population[j].tournament(population[j+1]) # 0 both survive, 1 - other dies, 2 self dies 3 - reproduce
-                
-                if return_code == 1:
-                    new_population.append(j+1)
-                if return_code == 2:
-                    temp_list.append(j)
-                if return_code == 3:
-                    if type(population[j]) == Cannibalist:
-                        cannibal = Cannibalist(0.1)
-                        population.append(cannibal)
-                    if type(population[j]) == Regular:
-                        regular = Regular(0.1)
-                        population.append(regular)
 
+                return_code, other = population[j].interact(population[j+1]) # 0 both survive, 1 - other dies, 2 self dies 3 - reproduce
+                if return_code == 0:
+                    new_population.append(population[j])
+                    new_population.append(population[j+1])
+                if return_code == 1:
+                    new_population.append(population[j])
+                if return_code == 2:
+                    new_population.append(other)
+                if return_code == 3:
+                    offspring = population[j].mate(population[j+1]) # will changes be made to population[j+1] ? 
+                    new_population.append(population[j])
+                    new_population.append(population[j+1])
+                    new_population.append(offspring)
 
         else:   # is uneven
             for j in range(0,len(population) - 1, 2):
+
+                return_code, other = population[j].interact(population[j+1]) # 0 both survive, 1 - other dies, 2 self dies 3 - reproduce
                 
+                if return_code == 0:
+                    new_population.append(population[j])
+                    new_population.append(population[j+1])
+                if return_code == 1:
+                    new_population.append(population[j])
+                if return_code == 2:
+                    new_population.append(other)
+                if return_code == 3:
+                    offspring = population[j].mate(population[j+1])
+                    new_population.append(population[j])
+                    new_population.append(population[j+1])
+                    new_population.append(offspring)
+
+        # Lose energy every timestep
+        for i in range(len(new_population)):
+            new_population[i].change_enery(metabolism)
         
-            
+
+        population = np.copy(new_population)
 
