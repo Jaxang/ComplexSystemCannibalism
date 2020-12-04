@@ -1,2 +1,3 @@
-def helper_function():
+def helper_function(population):
+    len(population)
     pass
