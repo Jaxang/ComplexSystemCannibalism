@@ -4,17 +4,18 @@ from src.regular import Regular
 import src.graphs
 import random
 import numpy as np
-         
+import copy
 
 
-if __name__ == '__main__':
-
+def main():
     ind_population = 100
     cannibalists = list()
     regulars = list()
     population = list()
     nr_time_steps = 1000
     metabolism = -4
+    nr_cannibalists = list()
+    nr_regulars = list()
 
     # initialize population
     for i in range(ind_population):
@@ -31,7 +32,10 @@ if __name__ == '__main__':
         new_population = list()
         random.shuffle(population)
 
-        #TODO: plot size of 
+        #save nr_cannibalists, save nr_regulars
+        nr_cannibalists, nr_regulars = get_ind_population(population)
+        nr_cannibists.append(nr_cannibalists)
+        nr_regulars.append(nr_regulars)
 
         # Interaction between individuals
         if len(population) % 2 == 0: # if population is even
@@ -71,8 +75,15 @@ if __name__ == '__main__':
 
         # Lose energy every timestep
         for i in range(len(new_population)):
-            new_population[i].change_enery(metabolism)
+            new_population[i].change_energy(metabolism)
+
+        
+        population =  [i for i in new_population if i.energy > 0]
         
 
-        population = np.copy(new_population)
 
+    graphs.plot_nr(nr_cannibalists, nr_regulars)
+
+
+if __name__ == '__main__':
+    main()
