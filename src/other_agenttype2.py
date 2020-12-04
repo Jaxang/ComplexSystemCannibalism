@@ -1,5 +1,7 @@
-from src.base_agent import BaseAgent
+from base_agent import BaseAgent
 
 
 class OtherAgenttype2(BaseAgent):
-    pass
+    
+    def test(self):
+        pass
