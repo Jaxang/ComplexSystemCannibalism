@@ -3,8 +3,6 @@ from src.cannibalist import Cannibalist
 from src.regular import Regular
 import src.graphs as graphs
 import random
-import numpy as np
-import copy
 
 
 def main():
@@ -19,8 +17,8 @@ def main():
 
     # initialize population
     for i in range(ind_population):
-        cannibal = Cannibalist(0.1)
-        regular = Regular(0.1)
+        cannibal = Cannibalist(0.4)
+        regular = Regular(0)
         cannibalists.append(cannibal)
         regulars.append(regular)
 
@@ -33,13 +31,13 @@ def main():
         new_population = list()
         random.shuffle(population)
 
-        #save nr_cannibalists, save nr_regulars
+        # save nr_cannibals, save nr_regulars
         nr_can, nr_reg = get_ind_population(population)
         nr_cannibalists.append(nr_can)
         nr_regulars.append(nr_reg)
 
         # Interaction between individuals
-        for j  in range(0,len(population) - len(population) % 2, 2):
+        for j in range(0, len(population) - len(population) % 2, 2):
 
             return_code, other = population[j].interact(population[j+1]) # 0 both survive, 1 - other dies, 2 self dies 3 - reproduce
             if return_code == 0:
@@ -55,16 +53,11 @@ def main():
                 new_population.append(other)
                 new_population.append(offspring)
 
-        
-
         # Lose energy every timestep
         for j in range(len(new_population)):
             new_population[j].change_energy(metabolism)
-
         
-        population =  [j for j in new_population if j.energy > 0]
-        
-
+        population = [j for j in new_population if j.energy > 0]
 
     graphs.plot_nr(nr_cannibalists, nr_regulars)
 

@@ -1,7 +1,6 @@
 from src.cannibalist import Cannibalist
 
 
-
 def get_ind_population(population):
     population_size = len(population)
     nr_can = 0
@@ -14,4 +13,3 @@ def get_ind_population(population):
             nr_reg += 1
 
     return nr_can, nr_reg
-

@@ -17,7 +17,7 @@ class BaseAgent:
         self.energy_max = 100
         self.alive = True
         self.energy = random.randint(self.min_energy_init, self.max_energy_init)
-        self.u = u  # probability of comitting cannibalism
+        self.u = u  # probability of committing cannibalism
         self.fighting_capability = np.random.randn() + self.fighting_capability_mean
 
     def fight(self, other):
@@ -40,7 +40,7 @@ class BaseAgent:
             self.alive = False
             return False
 
-    #other should be returned aswell!
+    # other should be returned as well!
     def interact(self, other):
         """returns
         - 0  if both survive

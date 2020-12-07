@@ -1,5 +1,4 @@
 from src.base_agent import BaseAgent
-import random
 
 
 class Cannibalist(BaseAgent):
