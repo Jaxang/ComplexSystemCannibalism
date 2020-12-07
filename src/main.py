@@ -18,8 +18,8 @@ def main():
 
     # initialize population
     for i in range(ind_population):
-        cannibal = Cannibalist(0.1)
-        regular = Regular(0)
+        cannibal = Cannibalist(0.3, 0.6)
+        regular = Regular(0, 0.3)
         cannibalists.append(cannibal)
         regulars.append(regular)
 

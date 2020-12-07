@@ -9,16 +9,16 @@ class BaseAgent:
     fighting_energy_cost_base = 10
     fighting_energy_cost_factor = 5
     energy_from_cannibalising = 10
-    energy_retained_when_cannibalising = 0.5
+    energy_retained_when_cannibalising = 0.9
     mating_energy = 0.5
     mating_cost = 0.3
 
-    def __init__(self, u):
+    def __init__(self, u, f):
         self.energy_max = 100
         self.alive = True
         self.energy = random.randint(self.min_energy_init, self.max_energy_init)
         self.u = u  # probability of committing cannibalism
-        self.fighting_capability = np.random.randn() + self.fighting_capability_mean
+        self.fighting_capability = f
 
     def fight(self, other):
         """Returns True if the individual wins"""
@@ -75,9 +75,9 @@ class BaseAgent:
     def mate(self, other):
         r = random.random()
         if r < 0.5:
-            new_individual = type(self)(self.u)
+            new_individual = type(self)(self.u, self.fighting_capability)
         else:
-            new_individual = type(other)(other.u)
+            new_individual = type(other)(other.u, other.fighting_capability)
         self.change_energy(-self.mating_cost*self.energy_max)
         other.change_energy(-other.mating_cost * other.energy_max)
         return new_individual
