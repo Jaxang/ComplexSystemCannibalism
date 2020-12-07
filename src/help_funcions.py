@@ -30,3 +30,41 @@ def get_average_p_cannibalize(population):
         total += population[i].p_cannibalise
     average = total / len(population)
     return average
+
+def get_smallest_distance(individual, food_list):
+    
+    distances = list()
+    for i in range(len(food_list)):
+        
+        x_diff = individual.x - food_list[i][0]
+        y_diff = individual.y - food_list[i][1]
+        distance = np.sqrt(x_diff**2 + y_diff**2)
+        distances.append(distance)
+
+    return distances.index(min(distances)), min(distances)
+
+def get_distances(individual, population):
+    distances = np.zeros(len(population))
+    for i in range(len(population)):
+        x_diff = individual.x - population[i].x
+        y_diff = individual.y - population[i].y
+        distance = np.sqrt(x_diff**2 + y_diff**2)
+        ditances[i] = distance
+    
+    return distances
+
+def get_adj_matrix(population):
+    adj = np.zeros((len(population) +1, len(population)+1))
+    for i in range(len(population)):
+        for j in range(i, len(population))
+            if i == j:
+                adj[i,j] = math.inf
+                adj[j,i] = math.inf
+            else:
+                x_diff = population[i].x - population[j].x
+                y_diff = population[i].y - population[j].y
+                dist = np.sqrt(x_diff** + y_diff**2)
+                adj[i,j] = dist
+                adj[j,i] = dist
+    
+    return adj

@@ -2,11 +2,13 @@ from src.help_funcions import get_ind_population
 from src.help_funcions import get_average_u
 from src.help_funcions import get_average_u
 from src.help_funcions import get_average_p_cannibalize
+from src.help_funcions import get_smallest_distance
 from src.cannibalist import Cannibalist
 from src.regular import Regular
 import src.graphs as graphs
 import random
 import matplotlib.pyplot as plt
+import numpy as np
 
 def cannibal_regular():
     ind_population = 100
@@ -112,7 +114,7 @@ def evolution_simulation():
             elif return_code == 2:
                 new_population.append(other)
             elif return_code == 3:
-                offspring = population[j].mate(population[j+1]) # will changes be made to population[j+1] ? 
+                offspring = population[j].mate(population[j+1]) 
                 new_population.append(population[j])
                 new_population.append(other)
                 new_population.append(offspring)
@@ -125,7 +127,83 @@ def evolution_simulation():
 
     graphs.plot_rates(average_u_list, average_p_list, nr_cannibalists)
 
+def lattice_model():
+    ind_population = 100
+    cannibalists = list()
+    population = list()
+    nr_time_steps = 3000
+    food_source = 2 * 20 * ind_population
+    metabolism = -5
+    nr_cannibalists = list()
+    average_u_list = list()
+    average_p_list = list()
+    grid_size  = 100
+    food_list = list()
 
+    # initialize population
+    for i in range(ind_population):
+        x = np.random.randint(grid_size)
+        y = np.random.randint(grid_size)
+        cannibal = Cannibalist(0.3, 0.6, 0.1,x, y)
+        population.append(cannibal)
+    
+    for i in range(food_source):
+        x = np.random.randint(grid_size)
+        y = np.random.randint(grid_size)
+        food_list.append([x,y])
+
+
+    # main code 
+    for i in range(nr_time_steps):
+        print("time step: ", i)
+        new_population = list()
+        random.shuffle(population)
+        
+        # get averages
+        average_u = get_average_u(population)
+        average_p_cannibalize = get_average_p_cannibalize(population)
+        average_u_list.append(average_u)
+        average_p_list.append(average_p_cannibalize)
+        nr_cannibalists.append(len(population))
+        nr_interactions = len(population) - len(population) // 2
+        food_per_interaction = food_source/nr_interactions
+
+
+        # Adj matrix:
+        Adj_matrix = get_adj_matrix(population):        
+
+        # Interaction between individuals
+        for j in range(len(population)):
+            
+            if population[j].energy >= population[j].mating_energy*population[j].energy_max:
+                partner_dist = min(Adj_matrix[j,:])
+                if partner_dist < 5:
+                    
+                    offspring = population[j].mate(population[Adj_matrix[j,:].index(partner_dist)])
+
+            index, distance = get_smallest_distance(population[j],food_list)
+            
+            if distance < 5:
+                print(population[j].x , " ",  population[j].y )
+                population[j].x = food_list[index][0]
+                population[j].y = food_list[index][1]
+               
+                print("----")
+                print(food_list[index][0], " ",food_list[index][1] )
+
+            else: 
+                #TODO: move randomly-ish
+
+        # Lose energy every timestep
+        for j in range(len(new_population)):
+            
+            
+        
+        print("Population ", population)
+        print("new population ", new_population)
+        population = [j for j in new_population if j.energy > 0]
+
+   
 
 if __name__ == '__main__':
     #cannibal_regular()
