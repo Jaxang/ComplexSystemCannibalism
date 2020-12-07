@@ -13,12 +13,13 @@ class BaseAgent:
     mating_energy = 0.5
     mating_cost = 0.3
 
-    def __init__(self, u, f):
+    def __init__(self, u, f, p_cannibalise=None):
         self.energy_max = 100
         self.alive = True
         self.energy = random.randint(self.min_energy_init, self.max_energy_init)
         self.u = u  # probability of committing cannibalism
         self.fighting_capability = f
+        self.p_cannibalise = p_cannibalise
 
     def fight(self, other):
         """Returns True if the individual wins"""
@@ -55,17 +56,16 @@ class BaseAgent:
         elif r < self.u or r < other.u:
             outcome = self.fight(other)
             if outcome:
-                self.cannibalise(other.energy)
-                self.eat(food)
+                self.eat(food, other, other_dead=True)
                 return 1, other
             else:
-                other.cannibalise(self.energy)
+                other.eat(food, self, other_dead=True)
                 return 2, other
         else:
-            self.eat(food, other)
+            self.eat(food, other, other_dead=False)
         return 0, other
 
-    def eat(self, food_energy, other=None):
+    def eat(self, food_energy, other, other_dead=False):
         pass
 
     def cannibalise(self, others_energy):
