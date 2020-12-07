@@ -1,6 +1,8 @@
 import random
 import numpy as np
 
+from src.help_funcions import creep_mutation
+
 
 class BaseAgent:
     max_energy_init = 100
@@ -75,9 +77,12 @@ class BaseAgent:
     def mate(self, other):
         r = random.random()
         if r < 0.5:
-            new_individual = type(self)(self.u, self.fighting_capability)
+            new_p_cannibalise = creep_mutation(self.p_cannibalise) if self.p_cannibalise else None
+            new_individual = type(self)(self.u, self.fighting_capability, new_p_cannibalise)
         else:
-            new_individual = type(other)(other.u, other.fighting_capability)
+            new_p_cannibalise = creep_mutation(other.p_cannibalise) if other.p_cannibalise else None
+            new_individual = type(other)(other.u, other.fighting_capability, new_p_cannibalise)
+
         self.change_energy(-self.mating_cost*self.energy_max)
         other.change_energy(-other.mating_cost * other.energy_max)
         return new_individual
