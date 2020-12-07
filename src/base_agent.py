@@ -9,7 +9,7 @@ class BaseAgent:
     fighting_energy_cost_base = 10
     fighting_energy_cost_factor = 5
     energy_from_cannibalising = 10
-    energy_retained_when_cannibalising = 0.9
+    energy_retained_when_cannibalising = 0.85
     mating_energy = 0.5
     mating_cost = 0.3
 

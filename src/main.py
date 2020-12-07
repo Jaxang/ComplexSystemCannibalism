@@ -5,7 +5,7 @@ import src.graphs as graphs
 import random
 
 
-def main():
+def cannibal_regular():
     ind_population = 100
     cannibalists = list()
     regulars = list()
@@ -66,4 +66,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    cannibal_regular()
