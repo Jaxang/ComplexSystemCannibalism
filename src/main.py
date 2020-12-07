@@ -3,7 +3,7 @@ from src.cannibalist import Cannibalist
 from src.regular import Regular
 import src.graphs as graphs
 import random
-
+import matplotlib.pyplot as plt
 
 def main():
     ind_population = 100
@@ -25,20 +25,20 @@ def main():
 
     population.extend(cannibalists)
     population.extend(regulars)
-
+    plt.figure()
     # main code 
     for i in range(nr_time_steps):
-        print(i)
+        print("time step: ", i)
         new_population = list()
         random.shuffle(population)
-
+        
         # save nr_cannibals, save nr_regulars
         nr_can, nr_reg = get_ind_population(population)
         nr_cannibalists.append(nr_can)
         nr_regulars.append(nr_reg)
         nr_interactions = len(population) - len(population) // 2
         food_per_interaction = food_sorce/nr_interactions
-
+        graphs.circular_plot(population)
         # Interaction between individuals
         for j in range(0, len(population) - len(population) % 2, 2):
 
