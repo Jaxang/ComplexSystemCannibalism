@@ -5,7 +5,7 @@ import src.graphs as graphs
 import random
 import matplotlib.pyplot as plt
 
-def main():
+def cannibal_regular():
     ind_population = 100
     cannibalists = list()
     regulars = list()
@@ -18,8 +18,8 @@ def main():
 
     # initialize population
     for i in range(ind_population):
-        cannibal = Cannibalist(0.1)
-        regular = Regular(0)
+        cannibal = Cannibalist(0.3, 0.6)
+        regular = Regular(0, 0.3)
         cannibalists.append(cannibal)
         regulars.append(regular)
 
@@ -66,4 +66,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    cannibal_regular()
