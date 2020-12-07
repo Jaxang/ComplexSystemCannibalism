@@ -41,7 +41,7 @@ class BaseAgent:
             return False
 
     # other should be returned as well!
-    def interact(self, other):
+    def interact(self, other, food):
         """returns
         - 0  if both survive
         - 1 if other dies
@@ -56,14 +56,17 @@ class BaseAgent:
             outcome = self.fight(other)
             if outcome:
                 self.cannibalise(other.energy)
+                self.eat(food)
                 return 1, other
             else:
                 other.cannibalise(self.energy)
                 return 2, other
+        else:
+            self.eat(food, other)
         return 0, other
 
-    def eat(self, food_energy):
-        self.change_energy(food_energy)
+    def eat(self, food_energy, other=None):
+        pass
 
     def cannibalise(self, others_energy):
         # Assumes base case is not to cannibalise

@@ -10,14 +10,15 @@ def main():
     cannibalists = list()
     regulars = list()
     population = list()
-    nr_time_steps = 100
-    metabolism = 1
+    nr_time_steps = 300
+    food_sorce = 2 * 20 * ind_population
+    metabolism = -5
     nr_cannibalists = list()
     nr_regulars = list()
 
     # initialize population
     for i in range(ind_population):
-        cannibal = Cannibalist(0.4)
+        cannibal = Cannibalist(0.1)
         regular = Regular(0)
         cannibalists.append(cannibal)
         regulars.append(regular)
@@ -35,11 +36,13 @@ def main():
         nr_can, nr_reg = get_ind_population(population)
         nr_cannibalists.append(nr_can)
         nr_regulars.append(nr_reg)
+        nr_interactions = len(population) - len(population) // 2
+        food_per_interaction = food_sorce/nr_interactions
 
         # Interaction between individuals
         for j in range(0, len(population) - len(population) % 2, 2):
 
-            return_code, other = population[j].interact(population[j+1]) # 0 both survive, 1 - other dies, 2 self dies 3 - reproduce
+            return_code, other = population[j].interact(population[j+1], food_per_interaction) # 0 both survive, 1 - other dies, 2 self dies 3 - reproduce
             if return_code == 0:
                 new_population.append(population[j])
                 new_population.append(other)
