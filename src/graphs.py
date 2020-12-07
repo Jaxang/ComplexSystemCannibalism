@@ -13,12 +13,16 @@ def plot_nr(nr_can, nr_reg):
     plt.title("Population size")
     plt.show()
 
-def plot_rates(average_u, avarege_fight):
+def plot_rates(average_u, averege_fight, population_size):
     plt.figure()
+    plt.subplot(121)
     plt.plot(average_u, 'r', label="Cannibalism rate")
-    plt.plot(avarege_fight, 'b', label="Fight parameter")
+    plt.plot(averege_fight, 'b', label="Fight parameter")
+    plt.subplot(122)
+    plt.plot(population_size, 'g', population_size)
     plt.legend()
     plt.xlabel("time step")
     plt.ylabel(" what to write here")
     plt.title("Change of evolutionary parameters")
     plt.show()
+   
