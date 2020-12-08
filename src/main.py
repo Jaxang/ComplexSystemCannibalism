@@ -3,6 +3,7 @@ from src.help_funcions import get_average_u
 from src.help_funcions import get_average_u
 from src.help_funcions import get_average_p_cannibalize
 from src.help_funcions import get_smallest_distance
+from src.help_funcions import move
 from src.cannibalist import Cannibalist
 from src.regular import Regular
 import src.graphs as graphs
@@ -139,6 +140,7 @@ def lattice_model():
     average_p_list = list()
     grid_size  = 100
     food_list = list()
+    food_supply = 30
 
     # initialize population
     for i in range(ind_population):
@@ -147,6 +149,7 @@ def lattice_model():
         cannibal = Cannibalist(0.3, 0.6, 0.1,x, y)
         population.append(cannibal)
     
+    # initialize food
     for i in range(food_source):
         x = np.random.randint(grid_size)
         y = np.random.randint(grid_size)
@@ -155,9 +158,10 @@ def lattice_model():
 
     # main code 
     for i in range(nr_time_steps):
+
         print("time step: ", i)
         new_population = list()
-        random.shuffle(population)
+        
         
         # get averages
         average_u = get_average_u(population)
@@ -167,7 +171,8 @@ def lattice_model():
         nr_cannibalists.append(len(population))
         nr_interactions = len(population) - len(population) // 2
         food_per_interaction = food_source/nr_interactions
-
+        competition_list = np.zeros(len(population))
+        competition_list = np.subtract(competition_list,1)
 
         # Adj matrix:
         Adj_matrix = get_adj_matrix(population):        
@@ -176,34 +181,53 @@ def lattice_model():
         for j in range(len(population)):
             
             if population[j].energy >= population[j].mating_energy*population[j].energy_max:
+                
                 partner_dist = min(Adj_matrix[j,:])
+                
                 if partner_dist < 5:
                     
+                    population[j].x = population[Adj_matrix[j,:].index(partner_dist)].x
+                    population[j].y = population[Adj_matrix[j,:].index(partner_dist)].y
                     offspring = population[j].mate(population[Adj_matrix[j,:].index(partner_dist)])
+                    new_population.append(offspring)
+            else:
+                
+                index, distance = get_smallest_distance(population[j],food_list)
 
-            index, distance = get_smallest_distance(population[j],food_list)
+                if distance < 5:
             
-            if distance < 5:
-                print(population[j].x , " ",  population[j].y )
-                population[j].x = food_list[index][0]
-                population[j].y = food_list[index][1]
-               
-                print("----")
-                print(food_list[index][0], " ",food_list[index][1] )
+                    population[j].x = food_list[index][0]
+                    population[j].y = food_list[index][1]
+                    competition_list[j] = index
 
-            else: 
-                #TODO: move randomly-ish
+                else: 
+                    move(population[j], grid_size)
+
+            new_population.append(population[j])
 
         # Lose energy every timestep
         for j in range(len(new_population)):
+            new_population[j].change_energy(metabolism)
             
+        # interact
+        for k in range(len(food_list)):
+            indices = [v for v, x in enumerate(competition_list) if x == k]
+            if len(indices) != 0:
+                # do something
             
-        
-        print("Population ", population)
-        print("new population ", new_population)
+
+
+
+        # spawn new food
+        for j in range(food_supply):
+            x = np.random.randint(grid_size)
+            y = np.random.randint(grid_size)
+            food_list.append([x,y])
+
+
         population = [j for j in new_population if j.energy > 0]
 
-   
+
 
 if __name__ == '__main__':
     #cannibal_regular()

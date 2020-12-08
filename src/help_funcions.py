@@ -68,3 +68,22 @@ def get_adj_matrix(population):
                 adj[j,i] = dist
     
     return adj
+
+def move(individual, gridsize):
+    r = np.random.random
+    if r <= 1/4:
+        individual.x += 1
+        if individual.x > gridsize
+            individual.x = 0
+    elif r <= 1/2:
+        individual.x -= 1
+        if individual.x < 0
+            individual.x = gridsize
+    elif r <= 3/4:
+        individual.y += 1
+        if individual.y > gridSize
+            individual.y = 0
+    else:
+        individual.y -= 1
+        if individual.y < 0
+            individual.y = gridsize
