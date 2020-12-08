@@ -130,24 +130,23 @@ def evolution_simulation():
 
 def lattice_model():
     ind_population = 100
-    cannibalists = list()
     population = list()
     nr_time_steps = 3000
-    food_source = 2 * 20 * ind_population
-    food_energy = 10
+    food_energy = 30
     metabolism = -5
     nr_cannibalists = list()
     average_u_list = list()
     average_p_list = list()
     grid_size = 100
     food_list = list()
-    food_supply = 30
+    init_food_supply = 30
+    food_supply = init_food_supply
 
     # initialize population
     for i in range(ind_population):
         x = np.random.randint(grid_size)
         y = np.random.randint(grid_size)
-        cannibal = Cannibalist(0.3, 0.6, 0.1,x, y)
+        cannibal = Cannibalist(0.05, 0.6, 0.1,x, y)
         population.append(cannibal)
     
     # initialize food
@@ -156,24 +155,22 @@ def lattice_model():
         y = np.random.randint(grid_size)
         food_list.append([x,y])
 
-
+    graphs.plot_lattice(food_list, population, grid_size)
     # main code 
     for i in range(nr_time_steps):
 
         print("time step: ", i)
         new_population = list()
         
-        graphs.plot_lattice(food_list, population, grid_size)
+
         # get averages
         average_u = get_average_u(population)
         average_p_cannibalize = get_average_p_cannibalize(population)
         average_u_list.append(average_u)
         average_p_list.append(average_p_cannibalize)
         nr_cannibalists.append(len(population))
-        nr_interactions = len(population) - len(population) // 2
-        food_per_interaction = food_source/nr_interactions
         competition_list = np.zeros(len(population))
-        competition_list = np.subtract(competition_list,1)
+        competition_list = np.subtract(competition_list, 1)
 
         # Adj matrix:
         Adj_matrix = get_adj_matrix(population)
@@ -207,19 +204,21 @@ def lattice_model():
             new_population.append(population[j])
 
         # interact
-        index_to_remove=[]
+        food_index_to_remove = []
         for k in range(len(food_list)):
             indices = [v for v, x in enumerate(competition_list) if x == k]
             if len(indices) != 0:
                 if len(indices) == 1:
                     population[indices[0]].consume_food(food_energy)
-                    index_to_remove.append(k)
+                    food_index_to_remove.append(k)
                 else:
                     indices = np.random.choice(indices, 2)
-                    _, food_left = population[indices[0]].interact(population[indices[1]], food_energy)
+                    interaction_code, food_left = population[indices[0]].interact(population[indices[1]], food_energy)
+                    print(f"interaction {interaction_code}")
                     if food_left == 0:
-                        index_to_remove.append(k)
-        food_list = [coord for _index, coord in enumerate(food_list) if _index in index_to_remove]
+                        food_index_to_remove.append(k)
+
+        food_list = [coord for _index, coord in enumerate(food_list) if _index not in food_index_to_remove]
           
         # spawn new food
         for j in range(food_supply):
@@ -232,7 +231,14 @@ def lattice_model():
             new_population[j].change_energy(metabolism)
 
         # save population
-        population = [j for j in new_population if j.energy > 0]
+        population = [agent for agent in new_population if agent.energy > 0 and agent.alive]
+        dead_by_energy = np.array([1 for agent in new_population if agent.energy <= 0]).sum()
+        print(f"dead_by_energy {dead_by_energy}")
+        dead_by_fight = np.array([1 for agent in new_population if not agent.alive]).sum()
+        print(f"dead_by_fight {dead_by_fight}")
+        print(len(population))
+        mod_food_supply =graphs.plot_lattice(food_list, population, grid_size)
+        food_supply = int(round(init_food_supply*mod_food_supply))
 
 
 

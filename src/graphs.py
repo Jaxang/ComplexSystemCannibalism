@@ -5,7 +5,7 @@ from PIL import Image
 from PIL import ImageTk as itk
 
 class CanvasAnimate:
-    def __init__(self, res=500, food_source=0.8, l=5):
+    def __init__(self, res=500, l=5):
         self.l = l
         self.res = res
         self.tk = Tk()
@@ -17,10 +17,10 @@ class CanvasAnimate:
         self.canvas.place(x=res / 20, y=res / 20, height=res, width=res)
         ccolor = ['#0008FF', '#DB0000', '#12F200']
 
-        self.food = Scale(self.tk, from_=0, to=1, orient=HORIZONTAL, label='food source', font=("Helvetica", 8),
+        self.food = Scale(self.tk, from_=0, to=2, orient=HORIZONTAL, label='percentage food source', font=("Helvetica", 8),
                             resolution=0.01)
         self.food.place(relx=.57, rely=.85, relheight=0.12, relwidth=0.33)
-        self.food.set(0.9)  # Parameter slider for lightning rate
+        self.food.set(1)  # Parameter slider for lightning rate
         self.image = np.zeros((l, l, 3))
 
     def update(self, agent_array, food_array):

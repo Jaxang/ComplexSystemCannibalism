@@ -19,7 +19,7 @@ class BaseAgent:
     def __init__(self, u, f, p_cannibalise=None, x = 1, y = 1):
         self.energy_max = 100
         self.alive = True
-        self.energy = random.randint(self.min_energy_init, self.max_energy_init)
+        self.energy = 49
         self.u = u  # probability of committing cannibalism
         self.fighting_capability = f
         self.p_cannibalise = p_cannibalise
@@ -84,10 +84,10 @@ class BaseAgent:
         r = random.random()
         if r < 0.5:
             new_p_cannibalise = creep_mutation(self.p_cannibalise) if self.p_cannibalise else None
-            new_individual = type(self)(self.u, self.fighting_capability, new_p_cannibalise)
+            new_individual = type(self)(self.u, self.fighting_capability, new_p_cannibalise, x=self.x, y=self.y)
         else:
             new_p_cannibalise = creep_mutation(other.p_cannibalise) if other.p_cannibalise else None
-            new_individual = type(other)(other.u, other.fighting_capability, new_p_cannibalise)
+            new_individual = type(other)(other.u, other.fighting_capability, new_p_cannibalise, x=other.x, y=other.y)
 
         self.change_energy(-self.mating_cost*self.energy_max)
         other.change_energy(-other.mating_cost * other.energy_max)
