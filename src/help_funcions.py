@@ -56,7 +56,7 @@ def get_distances(individual, population):
 def get_adj_matrix(population):
     adj = np.zeros((len(population) +1, len(population)+1))
     for i in range(len(population)):
-        for j in range(i, len(population))
+        for j in range(i, len(population)):
             if i == j:
                 adj[i,j] = math.inf
                 adj[j,i] = math.inf
@@ -73,18 +73,18 @@ def move(individual, gridsize):
     r = np.random.random
     if r <= 1/4:
         individual.x += 1
-        if individual.x > gridsize
+        if individual.x > gridsize:
             individual.x = 0
     elif r <= 1/2:
         individual.x -= 1
-        if individual.x < 0
+        if individual.x < 0:
             individual.x = gridsize
     elif r <= 3/4:
         individual.y += 1
-        if individual.y > gridSize
+        if individual.y > gridSize:
             individual.y = 0
     else:
         individual.y -= 1
-        if individual.y < 0
+        if individual.y < 0:
             individual.y = gridsize
 

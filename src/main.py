@@ -162,7 +162,7 @@ def lattice_model():
         print("time step: ", i)
         new_population = list()
         
-        
+        graphs.plot_lattice(food_list, population, grid_size)
         # get averages
         average_u = get_average_u(population)
         average_p_cannibalize = get_average_p_cannibalize(population)
@@ -175,7 +175,7 @@ def lattice_model():
         competition_list = np.subtract(competition_list,1)
 
         # Adj matrix:
-        Adj_matrix = get_adj_matrix(population):        
+        Adj_matrix = get_adj_matrix(population)        
 
         # Interaction between individuals
         for j in range(len(population)):
@@ -230,7 +230,7 @@ def lattice_model():
 
         # save population
         population = [j for j in new_population if j.energy > 0]
-        
+
 
 
 if __name__ == '__main__':
