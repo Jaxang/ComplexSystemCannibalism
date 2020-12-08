@@ -1,4 +1,4 @@
-from src.help_funcions import get_ind_population
+from src.help_funcions import get_ind_population, get_adj_matrix
 from src.help_funcions import get_average_u
 from src.help_funcions import get_average_u
 from src.help_funcions import get_average_p_cannibalize
@@ -134,11 +134,12 @@ def lattice_model():
     population = list()
     nr_time_steps = 3000
     food_source = 2 * 20 * ind_population
+    food_energy = 10
     metabolism = -5
     nr_cannibalists = list()
     average_u_list = list()
     average_p_list = list()
-    grid_size  = 100
+    grid_size = 100
     food_list = list()
     food_supply = 30
 
@@ -150,7 +151,7 @@ def lattice_model():
         population.append(cannibal)
     
     # initialize food
-    for i in range(food_source):
+    for i in range(food_supply):
         x = np.random.randint(grid_size)
         y = np.random.randint(grid_size)
         food_list.append([x,y])
@@ -175,24 +176,24 @@ def lattice_model():
         competition_list = np.subtract(competition_list,1)
 
         # Adj matrix:
-        Adj_matrix = get_adj_matrix(population)        
+        Adj_matrix = get_adj_matrix(population)
 
         # Interaction between individuals
         for j in range(len(population)):
             
             if population[j].energy >= population[j].mating_energy*population[j].energy_max:
                 
-                partner_dist = min(Adj_matrix[j,:])
-                
+                partner_dist = np.amin(Adj_matrix[j, :])
+
                 if partner_dist < 5:
-                    
-                    population[j].x = population[Adj_matrix[j,:].index(partner_dist)].x
-                    population[j].y = population[Adj_matrix[j,:].index(partner_dist)].y
-                    offspring = population[j].mate(population[Adj_matrix[j,:].index(partner_dist)])
+                    closest = np.where(Adj_matrix[j, :] == partner_dist)[0][0]
+                    population[j].x = population[closest].x
+                    population[j].y = population[closest].y
+                    offspring = population[j].mate(population[closest])
                     new_population.append(offspring)
             else:
                 
-                index, distance = get_smallest_distance(population[j],food_list)
+                index, distance = get_smallest_distance(population[j], food_list)
 
                 if distance < 5:
             
@@ -204,19 +205,21 @@ def lattice_model():
                     move(population[j], grid_size)
 
             new_population.append(population[j])
-            
+
         # interact
+        index_to_remove=[]
         for k in range(len(food_list)):
             indices = [v for v, x in enumerate(competition_list) if x == k]
             if len(indices) != 0:
                 if len(indices) == 1:
-                    population[indices].consume_food(food_energy)
-                    food_list.pop(k)
-                else: 
-                    indices = np.shuffle(indices)
-                    _ , food_left = population[indices[0]].interact(population[indices[1]])
+                    population[indices[0]].consume_food(food_energy)
+                    index_to_remove.append(k)
+                else:
+                    indices = np.random.choice(indices, 2)
+                    _, food_left = population[indices[0]].interact(population[indices[1]], food_energy)
                     if food_left == 0:
-                        food_list.pop(k)
+                        index_to_remove.append(k)
+        food_list = [coord for _index, coord in enumerate(food_list) if _index in index_to_remove]
           
         # spawn new food
         for j in range(food_supply):

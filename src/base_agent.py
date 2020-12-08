@@ -78,7 +78,7 @@ class BaseAgent:
         pass
 
     def consume_food(self, food_energy):
-        self.energy = min(self.energy + self.food_energy, self.energy_max)  
+        self.change_energy(food_energy)
 
     def mate(self, other):
         r = random.random()

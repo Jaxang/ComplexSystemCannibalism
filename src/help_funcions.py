@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import time
 
 def get_ind_population(population, Cannibalist):
     population_size = len(population)
@@ -53,38 +54,28 @@ def get_distances(individual, population):
     
     return distances
 
+
 def get_adj_matrix(population):
-    adj = np.zeros((len(population) +1, len(population)+1))
-    for i in range(len(population)):
-        for j in range(i, len(population)):
-            if i == j:
-                adj[i,j] = math.inf
-                adj[j,i] = math.inf
-            else:
-                x_diff = population[i].x - population[j].x
-                y_diff = population[i].y - population[j].y
-                dist = np.sqrt(x_diff** + y_diff**2)
-                adj[i,j] = dist
-                adj[j,i] = dist
-    
+    start= time.time()
+    adj = np.zeros((len(population), len(population)))
+    x = np.array([ind.x for ind in population]).reshape(-1, 1)
+    x_diff = (x-x.transpose())**2
+    y = np.array([ind.y for ind in population]).reshape(-1, 1)
+    y_diff = (y - y.transpose()) ** 2
+    adj = np.sqrt(x_diff+y_diff)
+    np.fill_diagonal(adj, np.inf)
+    end = time.time()
+    print(end-start)
     return adj
 
 def move(individual, gridsize):
-    r = np.random.random
+    r = np.random.random()
     if r <= 1/4:
-        individual.x += 1
-        if individual.x > gridsize:
-            individual.x = 0
+        individual.x = (individual.x + 1) % gridsize
     elif r <= 1/2:
-        individual.x -= 1
-        if individual.x < 0:
-            individual.x = gridsize
+        individual.x = (individual.x - 1) % gridsize
     elif r <= 3/4:
-        individual.y += 1
-        if individual.y > gridSize:
-            individual.y = 0
+        individual.y = (individual.y + 1) % gridsize
     else:
-        individual.y -= 1
-        if individual.y < 0:
-            individual.y = gridsize
+        individual.y = (individual.y - 1) % gridsize
 
