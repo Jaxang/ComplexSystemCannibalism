@@ -53,10 +53,10 @@ def plot_nr(nr_can, nr_reg):
 
 def plot_rates(average_u, averege_fight, population_size):
     plt.figure()
-    plt.subplot(121)
+    plt.subplot(211)
     plt.plot(average_u, 'r', label="Cannibalism rate")
     plt.plot(averege_fight, 'b', label="Fight parameter")
-    plt.subplot(122)
+    plt.subplot(212)
     plt.plot(population_size, 'g', population_size)
     plt.legend()
     plt.xlabel("time step")
