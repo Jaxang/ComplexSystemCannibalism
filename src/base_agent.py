@@ -14,6 +14,7 @@ class BaseAgent:
     energy_retained_when_cannibalising = 0.85
     mating_energy = 0.5
     mating_cost = 0.3
+    
 
     def __init__(self, u, f, p_cannibalise=None, x = 1, y = 1):
         self.energy_max = 100
@@ -60,14 +61,14 @@ class BaseAgent:
         elif r < self.u or r < other.u:
             outcome = self.fight(other)
             if outcome:
-                self.eat(food, other, other_dead=True)
-                return 1, other
+                food_left = self.eat(food, other, other_dead=True)
+                return 1, food_left
             else:
-                other.eat(food, self, other_dead=True)
-                return 2, other
+                food_left = other.eat(food, self, other_dead=True)
+                return 2, food_left
         else:
-            self.eat(food, other, other_dead=False)
-        return 0, other
+            food_left = self.eat(food, other, other_dead=False)
+        return 0, food_left
 
     def eat(self, food_energy, other, other_dead=False):
         pass
@@ -75,6 +76,9 @@ class BaseAgent:
     def cannibalise(self, others_energy):
         # Assumes base case is not to cannibalise
         pass
+
+    def consume_food(self, food_energy):
+        self.energy = min(self.energy + self.food_energy, self.energy_max)  
 
     def mate(self, other):
         r = random.random()

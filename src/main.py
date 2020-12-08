@@ -204,29 +204,33 @@ def lattice_model():
                     move(population[j], grid_size)
 
             new_population.append(population[j])
-
-        # Lose energy every timestep
-        for j in range(len(new_population)):
-            new_population[j].change_energy(metabolism)
             
         # interact
         for k in range(len(food_list)):
             indices = [v for v, x in enumerate(competition_list) if x == k]
             if len(indices) != 0:
-                # do something
-            
-
-
-
+                if len(indices) == 1:
+                    population[indices].consume_food(food_energy)
+                    food_list.pop(k)
+                else: 
+                    indices = np.shuffle(indices)
+                    _ , food_left = population[indices[0]].interact(population[indices[1]])
+                    if food_left == 0:
+                        food_list.pop(k)
+          
         # spawn new food
         for j in range(food_supply):
             x = np.random.randint(grid_size)
             y = np.random.randint(grid_size)
             food_list.append([x,y])
 
+        # Lose energy every timestep
+        for j in range(len(new_population)):
+            new_population[j].change_energy(metabolism)
 
+        # save population
         population = [j for j in new_population if j.energy > 0]
-
+        
 
 
 if __name__ == '__main__':

@@ -87,3 +87,4 @@ def move(individual, gridsize):
         individual.y -= 1
         if individual.y < 0
             individual.y = gridsize
+
