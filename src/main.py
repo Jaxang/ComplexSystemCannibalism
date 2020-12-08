@@ -210,8 +210,13 @@ def lattice_model():
             new_population[j].change_energy(metabolism)
             
         # interact
-        for j in range(len(competition_list)):
-            np.where(competition_list[j] == competition_list, competition_list, )
+        for k in range(len(food_list)):
+            indices = [v for v, x in enumerate(competition_list) if x == k]
+            if len(indices) != 0:
+                # do something
+            
+
+
 
         # spawn new food
         for j in range(food_supply):
