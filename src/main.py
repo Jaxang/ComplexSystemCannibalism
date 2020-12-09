@@ -4,6 +4,7 @@ from src.help_funcions import get_average_u
 from src.help_funcions import get_average_p_cannibalize
 from src.help_funcions import get_smallest_distance
 from src.help_funcions import move
+from src.help_funcions import get_nearby_food
 from src.cannibalist import Cannibalist
 from src.regular import Regular
 import src.graphs as graphs
@@ -133,7 +134,7 @@ def evolution_simulation():
 def lattice_model():
     ind_population = 100
     population = list()
-    nr_time_steps = 300
+    nr_time_steps = 3000
     food_energy = 30
     metabolism = -5
     nr_cannibalists = list()
@@ -144,6 +145,7 @@ def lattice_model():
     food_supply_list = list()
     init_food_supply = 30
     food_supply = init_food_supply
+    search_area = 5
 
     # initialize population
     for i in range(ind_population):
@@ -196,10 +198,14 @@ def lattice_model():
                     mated[closest] = True
             else:
                 
-                index, distance = get_smallest_distance(population[j], food_list)
+                #index, distance = get_smallest_distance(population[j], food_list)
+                indices = get_nearby_food(population[j], food_list, search_area)
+
                 r = random.random()
-                if distance < 5:
-            
+                if len(indices) > 0:
+
+                    rand = np.random.randint(0,len(indices))
+                    index = indices[rand]
                     population[j].x = food_list[index][0]
                     population[j].y = food_list[index][1]
                     competition_list[j] = index
