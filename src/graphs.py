@@ -3,6 +3,8 @@ import numpy as np
 from tkinter import *
 from PIL import Image
 from PIL import ImageTk as itk
+from matplotlib import cm
+from numpy import genfromtxt
 
 class CanvasAnimate:
     def __init__(self, res=500, l=5):
@@ -82,3 +84,24 @@ def plot_lattice(food_list, population_list, l=100):
 
     return canvas.update(agent_array, food_array)
 
+def plot_surface():
+    nr_threads = 8
+    survivors = genfromtxt("src/survivors.csv", delimiter=",")
+    p_cannibalise = np.linspace(0.05, 0.5, nr_threads)
+    food_source = np.linspace(5,50,nr_threads*2)
+
+
+
+    fig = plt.figure()
+    ax = fig.gca(projection="3d")
+ 
+    X = food_source
+    Y = p_cannibalise
+    X, Y = np.meshgrid(X,Y)
+    Z = survivors
+    surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, antialiased=True)
+    ax.set_xlabel("food supply")
+    ax.set_ylabel("p_cannibalism")
+    ax.set_zlabel("Survived agents")
+    ax.set_title("enter which values")
+    plt.show()

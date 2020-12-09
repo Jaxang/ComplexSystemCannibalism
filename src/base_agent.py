@@ -118,11 +118,11 @@ class BaseAgent:
         r = random.random()
         if self.energy > self.mating_energy*self.energy_max and other.energy > other.mating_energy*other.energy_max:
             if r < 0.5:
-                new_p_cannibalise = creep_mutation(self.p_cannibalise) if self.p_cannibalise else None
-                new_individual = type(self)(self.u, self.fighting_capability, new_p_cannibalise, x=self.x, y=self.y)
+                #new_p_cannibalise = creep_mutation(self.p_cannibalise) if self.p_cannibalise else None
+                new_individual = type(self)(self.u, self.fighting_capability, self.p_cannibalise, x=self.x, y=self.y)
             else:
-                new_p_cannibalise = creep_mutation(other.p_cannibalise) if other.p_cannibalise else None
-                new_individual = type(other)(other.u, other.fighting_capability, new_p_cannibalise, x=other.x, y=other.y)
+                #new_p_cannibalise = creep_mutation(other.p_cannibalise) if other.p_cannibalise else None
+                new_individual = type(other)(other.u, other.fighting_capability, self.p_cannibalise, x=other.x, y=other.y)
 
             self.change_energy(-self.mating_cost*self.energy_max)
             other.change_energy(-other.mating_cost * other.energy_max)

@@ -82,15 +82,17 @@ def get_nearby_food(individual, food_list, max_distance):
     i = 0
     food_list = np.array(food_list)
     distances = np.sqrt((food_list[:,0] - individual.x)**2 + (food_list[:,1] - individual.y)**2)
-    indices = np.argpartition(distances, 10)
-    out_of_bounds  = False
-    while(not out_of_bounds):
-        if distances[indices[i]] < max_distance and not i > len(indices):
-            i += 1
-            
-        else:
-            out_of_bounds = True
-    
-    return indices[:i]
-    
+    if len(distances) > 0:
+        indices = np.argpartition(distances, min(10,distances.size - 1))
+        out_of_bounds  = False
+        while(not out_of_bounds):
+            if  i < distances.size and distances[indices[i]] < max_distance:
+                i += 1
+                
+            else:
+                out_of_bounds = True
+        
+        return indices[:i]
+    else:
+        return np.array([])
    

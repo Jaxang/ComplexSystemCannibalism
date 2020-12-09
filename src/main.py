@@ -12,6 +12,9 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 import time
+from multiprocessing import Process, Queue
+from numpy import asarray
+from numpy import savetxt
 
 def cannibal_regular():
     ind_population = 100
@@ -131,19 +134,19 @@ def evolution_simulation():
 
     graphs.plot_rates(average_u_list, average_p_list, nr_cannibalists)
 
-def lattice_model():
+def lattice_model(plot = True, init_food_supply = 30, p_cannibalise = 0.1):
     ind_population = 100
     population = list()
-    nr_time_steps = 3000
+    nr_time_steps = 10000
     food_energy = 30
-    metabolism = -5
+    metabolism = 0
     nr_cannibalists = list()
     average_u_list = list()
     average_p_list = list()
     grid_size = 100
     food_list = list()
     food_supply_list = list()
-    init_food_supply = 30
+    
     food_supply = init_food_supply
     search_area = 5
 
@@ -151,22 +154,23 @@ def lattice_model():
     for i in range(ind_population):
         x = np.random.randint(grid_size)
         y = np.random.randint(grid_size)
-        cannibal = Cannibalist(0.05, 0.6, 0.1, x, y)
+        cannibal = Cannibalist(0.05, 0.6, p_cannibalise, x, y)
         population.append(cannibal)
     
     # initialize food
     food_array = np.zeros((grid_size, grid_size))
-    x = np.random.randint(grid_size, size=food_supply)
-    y = np.random.randint(grid_size, size=food_supply)
+    x = np.random.randint(grid_size, size=int(food_supply))
+    y = np.random.randint(grid_size, size=int(food_supply))
     for _x, _y in zip(x, y):
         food_array[_x, _y] += 1
     food_list = list(zip(*food_array.nonzero()))
-
-    graphs.plot_lattice(food_list, population, grid_size)
+    if plot:
+        graphs.plot_lattice(food_list, population, grid_size)
     # main code 
     for i in range(nr_time_steps):
-
-        print("time step: ", i)
+        if len(population) == 0:
+            break
+        #print("time step: ", i)
         new_population = list()
         
 
@@ -210,7 +214,7 @@ def lattice_model():
                     population[j].y = food_list[index][1]
                     competition_list[j] = index
 
-                elif r < population[j].p_cannibalise*(population[j].energy_max/(population[j].energy * 10)) and partner_dist < 5:
+                elif population[j].energy > 0 and r < population[j].p_cannibalise*(population[j].energy_max/(population[j].energy * 10)) and partner_dist < 5:
                     closest = np.where(Adj_matrix[j, :] == partner_dist)[0][0]
                     population[j].x = population[closest].x
                     population[j].y = population[closest].y
@@ -220,7 +224,9 @@ def lattice_model():
                     else:
                         population[closest].eat(0, population[j], other_dead=True)
                 else: 
-                    move(population[j], grid_size)
+                    for _ in range(3):
+                        move(population[j], grid_size)
+                   
 
             new_population.append(population[j])
 
@@ -246,24 +252,24 @@ def lattice_model():
                     for i in range(int(food_at_coord)):
                         agents_index = np.where(selected_food == i)[0]
                         agents_to_compete = [population[indices[index]] for index in agents_index]
+                        food_left = 1
                         if len(agents_to_compete) == 1:
                             agents_to_compete[0].consume_food(food_energy)
                             food_left = 0
-                            food_array[coord_x, coord_y] -= 1
                         elif len(agents_to_compete) == 2:
                             _, food_left = agents_to_compete[0].interact(agents_to_compete[1], food_energy)
                         elif len(agents_to_compete) > 2:
                             _, food_left = agents_to_compete[0].interact(agents_to_compete[1:], food_energy)
-                        if food_left:
+                        if food_left == 0:
                             food_array[coord_x, coord_y] -= 1
         end = time.time()
-        print(end - start)
+        #print(end - start)
 
         #food_list = [coord for _index, coord in enumerate(food_list) if _index not in food_index_to_remove]
           
         # spawn new food
-        x = np.random.randint(grid_size, size=food_supply)
-        y = np.random.randint(grid_size, size=food_supply)
+        x = np.random.randint(grid_size, size=int(food_supply))
+        y = np.random.randint(grid_size, size=int(food_supply))
         for _x, _y in zip(x,y):
             food_array[_x, _y] += 1
         food_list = list(zip(*food_array.nonzero()))
@@ -275,16 +281,72 @@ def lattice_model():
         # save population
         population = [agent for agent in new_population if agent.energy > 0 and agent.alive]
         dead_by_energy = np.array([1 for agent in new_population if agent.energy <= 0]).sum()
-        print(f"dead_by_energy {dead_by_energy}")
+        #print(f"dead_by_energy {dead_by_energy}")
         dead_by_fight = np.array([1 for agent in new_population if not agent.alive]).sum()
-        print(f"dead_by_fight {dead_by_fight}")
+        #print(f"dead_by_fight {dead_by_fight}")
         print(len(population))
-        mod_food_supply =graphs.plot_lattice(food_list, population, grid_size)
-        food_supply = int(round(init_food_supply*mod_food_supply))
+        if plot:
+            mod_food_supply =graphs.plot_lattice(food_list, population, grid_size)
+            food_supply = int(round(init_food_supply*mod_food_supply))
         food_supply_list.append(food_supply)
-    graphs.plot_rates(average_u_list, average_p_list, food_supply_list)
+    if plot:
+        graphs.plot_rates(average_u_list, average_p_list, food_supply_list)
+    else:
+        return len(population)
 
 
+def simulation_run(q, food_supply):
+    
+    nr_averages = 5
+    nr_threads = 8
+    p_cannibalise = np.linspace(0.05, 0.5, nr_threads)
+    temp_survivors = np.zeros(nr_averages)
+    nr_survivors = np.zeros(len(p_cannibalise))
+
+    for i in range(len(p_cannibalise)):
+        for j in range(nr_averages):
+            temp_survivors[j] = lattice_model(False, food_supply, p_cannibalise[i])
+        nr_survivors[i] = np.sum(temp_survivors) / nr_averages
+    q.put(nr_survivors)
+
+def parameter_search():
+    nr_threads = 8
+    p_cannibalise = np.linspace(0, 0.5, nr_threads)
+    food_source = np.linspace(5,50,nr_threads*2)
+    queues = list()
+    processes = list()
+    save_survivors = np.zeros((len(p_cannibalise), len(food_source)))
+    proc = 0
+
+    for i in range(2):
+        for j in range(nr_threads):
+            queues.append(Queue())
+            processes.append(Process(target = simulation_run,args=(queues[i*nr_threads+j],
+            food_source[i*nr_threads+j],)))
+        print("start")
+        # start processes
+        for j in range(nr_threads):
+            processes[i*nr_threads+j].start()
+        print("join")
+        # join processes
+        for j in range(nr_threads):
+            processes[i * nr_threads + j].join()
+
+        print("save")
+        # save values
+        for j in range(nr_threads):
+            print("i:" ,i )
+            print("j:", j)
+            save_survivors[:, i* nr_threads+j] = np.transpose(queues[i*nr_threads + j].get())
+            print("lal")
+        proc += 1
+        print(proc)
+    data = asarray(save_survivors)
+    savetxt('survivors.csv', data, delimiter=',')
+    
+
+def plot_func():
+    graphs.plot_surface()
 
 if __name__ == '__main__':
     #cannibal_regular()
