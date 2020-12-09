@@ -97,7 +97,7 @@ def plot_surface():
  
     X = food_source
     Y = p_cannibalise
-    X, Y = np.meshgrid(X,Y)
+    X, Y = np.meshgrid(X, Y)
     Z = survivors
     surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, antialiased=True)
     ax.set_xlabel("food supply")

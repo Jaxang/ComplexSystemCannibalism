@@ -137,9 +137,9 @@ def evolution_simulation():
 def lattice_model(plot = True, init_food_supply = 30, p_cannibalise = 0.1):
     ind_population = 100
     population = list()
-    nr_time_steps = 10000
-    food_energy = 30
-    metabolism = 0
+    nr_time_steps = 1000
+    food_energy = 10
+    metabolism = -0.1
     nr_cannibalists = list()
     average_u_list = list()
     average_p_list = list()
@@ -214,7 +214,7 @@ def lattice_model(plot = True, init_food_supply = 30, p_cannibalise = 0.1):
                     population[j].y = food_list[index][1]
                     competition_list[j] = index
 
-                elif population[j].energy > 0 and r < population[j].p_cannibalise*(population[j].energy_max/(population[j].energy * 10)) and partner_dist < 5:
+                elif population[j].energy > 0 and population[j].energy < 20 and r < population[j].p_cannibalise and partner_dist < 5:
                     closest = np.where(Adj_matrix[j, :] == partner_dist)[0][0]
                     population[j].x = population[closest].x
                     population[j].y = population[closest].y
@@ -224,7 +224,7 @@ def lattice_model(plot = True, init_food_supply = 30, p_cannibalise = 0.1):
                     else:
                         population[closest].eat(0, population[j], other_dead=True)
                 else: 
-                    for _ in range(3):
+                    for _ in range(5):
                         move(population[j], grid_size)
                    
 

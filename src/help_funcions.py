@@ -81,8 +81,8 @@ def move(individual, gridsize):
 def get_nearby_food(individual, food_list, max_distance):
     i = 0
     food_list = np.array(food_list)
-    distances = np.sqrt((food_list[:,0] - individual.x)**2 + (food_list[:,1] - individual.y)**2)
-    if len(distances) > 0:
+    if food_list.size > 0:
+        distances = np.sqrt((food_list[:,0] - individual.x)**2 + (food_list[:,1] - individual.y)**2)
         indices = np.argpartition(distances, min(10,distances.size - 1))
         out_of_bounds  = False
         while(not out_of_bounds):

@@ -8,7 +8,7 @@ class BaseAgent:
     max_energy_init = 100
     min_energy_init = 60
     fighting_capability_mean = 0.5
-    fighting_energy_cost_base = 10
+    fighting_energy_cost_base = 5
     fighting_energy_cost_factor = 5
     energy_from_cannibalising = 10
     energy_retained_when_cannibalising = 0.85
