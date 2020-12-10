@@ -85,7 +85,7 @@ def plot_lattice(food_list, population_list, l=100):
     return canvas.update(agent_array, food_array)
 
 def plot_surface():
-    nr_threads = 8
+    nr_threads = 12
     survivors = genfromtxt("src/survivors.csv", delimiter=",")
     p_cannibalise = np.linspace(0.05, 0.5, nr_threads)
     food_source = np.linspace(5,50,nr_threads*2)
