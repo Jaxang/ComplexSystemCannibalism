@@ -359,8 +359,10 @@ def simulation_run2(q, food_supply, time_steps, p_cannibalise):
         output = lattice_model(False, food_supply, p_cannibalise, time_steps)
         temp_food[:, j] = np.array(output[1])
         temp_population[:, j] = np.array(output[2])
+        print("average done: " , j)
     food_per_time_step = temp_food.mean(1)
     pop_per_time_step = temp_population.mean(1)
+    print("queue put")
     q.put((food_per_time_step, pop_per_time_step))
 
 

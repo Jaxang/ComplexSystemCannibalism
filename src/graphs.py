@@ -86,9 +86,9 @@ def plot_lattice(food_list, population_list, l=100):
 
 def plot_surface():
     nr_threads = 12
-    survivors = genfromtxt("src/survivors.csv", delimiter=",")
+    survivors = genfromtxt("src/survivors2.csv", delimiter=",")
     p_cannibalise = np.linspace(0.05, 0.5, nr_threads)
-    food_source = np.linspace(5,50,nr_threads*2)
+    food_source = np.linspace(5,20,nr_threads*2)
 
 
 
@@ -108,8 +108,8 @@ def plot_surface():
 
 
 def plot_surface2():
-    nr_threads = 8
-    food = genfromtxt("food_available_100.csv", delimiter=",")
+    nr_threads = 12
+    food = genfromtxt("src/food_available_5000.csv", delimiter=",")
     time_steps=food.shape[1]
     p_cannibalise = np.linspace(0, 0.5, nr_threads)
     time_steps = np.arange(time_steps)
@@ -127,7 +127,7 @@ def plot_surface2():
     ax.set_zlabel("food_available")
     ax.set_title("enter which values")
     # ------------------------------------------------------
-    pop = genfromtxt("population_100.csv", delimiter=",")
+    pop = genfromtxt("src/population_5000.csv", delimiter=",")
     time_steps = pop.shape[1]
     p_cannibalise = np.linspace(0, 0.5, nr_threads)
     time_steps = np.arange(time_steps)
