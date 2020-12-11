@@ -108,7 +108,7 @@ def plot_surface():
 
 
 def plot_surface2():
-    nr_threads = 8
+    nr_threads = 12
     food = genfromtxt("food_available_100.csv", delimiter=",")
     time_steps=food.shape[1]
     p_cannibalise = np.linspace(0, 0.5, nr_threads)
