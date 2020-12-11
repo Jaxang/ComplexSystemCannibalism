@@ -134,15 +134,16 @@ def evolution_simulation():
 
     graphs.plot_rates(average_u_list, average_p_list, nr_cannibalists)
 
-def lattice_model(plot = True, init_food_supply = 30, p_cannibalise = 0.1):
+def lattice_model(plot = True, init_food_supply = 30, p_cannibalise = 0.1, nr_time_steps=1000):
     ind_population = 100
     population = list()
-    nr_time_steps = 1000
     food_energy = 10
     metabolism = -0.1
     nr_cannibalists = list()
     average_u_list = list()
     average_p_list = list()
+    available_food = list()
+    population_size = list()
     grid_size = 100
     food_list = list()
     food_supply_list = list()
@@ -266,7 +267,10 @@ def lattice_model(plot = True, init_food_supply = 30, p_cannibalise = 0.1):
         #print(end - start)
 
         #food_list = [coord for _index, coord in enumerate(food_list) if _index not in food_index_to_remove]
-          
+
+        available_food.append(food_array.sum())
+        population_size.append(len(population))
+
         # spawn new food
         x = np.random.randint(grid_size, size=int(food_supply))
         y = np.random.randint(grid_size, size=int(food_supply))
@@ -281,18 +285,19 @@ def lattice_model(plot = True, init_food_supply = 30, p_cannibalise = 0.1):
         # save population
         population = [agent for agent in new_population if agent.energy > 0 and agent.alive]
         dead_by_energy = np.array([1 for agent in new_population if agent.energy <= 0]).sum()
-        #print(f"dead_by_energy {dead_by_energy}")
+        # print(f"dead_by_energy {dead_by_energy}")
         dead_by_fight = np.array([1 for agent in new_population if not agent.alive]).sum()
-        #print(f"dead_by_fight {dead_by_fight}")
-        print(len(population))
+        # print(f"dead_by_fight {dead_by_fight}")
+        # print(len(population))
         if plot:
             mod_food_supply =graphs.plot_lattice(food_list, population, grid_size)
             food_supply = int(round(init_food_supply*mod_food_supply))
         food_supply_list.append(food_supply)
+
     if plot:
         graphs.plot_rates(average_u_list, average_p_list, food_supply_list)
     else:
-        return len(population)
+        return len(population), available_food, population_size
 
 
 def simulation_run(q, food_supply):
@@ -305,7 +310,7 @@ def simulation_run(q, food_supply):
 
     for i in range(len(p_cannibalise)):
         for j in range(nr_averages):
-            temp_survivors[j] = lattice_model(False, food_supply, p_cannibalise[i])
+            temp_survivors[j] = lattice_model(False, food_supply, p_cannibalise[i])[0]
         nr_survivors[i] = np.sum(temp_survivors) / nr_averages
     q.put(nr_survivors)
 
@@ -343,7 +348,59 @@ def parameter_search():
         print(proc)
     data = asarray(save_survivors)
     savetxt('survivors.csv', data, delimiter=',')
-    
+
+
+def simulation_run2(q, food_supply, time_steps, p_cannibalise):
+    nr_averages = 10
+    temp_food = np.zeros((time_steps, nr_averages))
+    temp_population = np.zeros((time_steps, nr_averages))
+
+    for j in range(nr_averages):
+        output = lattice_model(False, food_supply, p_cannibalise, time_steps)
+        temp_food[:, j] = np.array(output[1])
+        temp_population[:, j] = np.array(output[2])
+    food_per_time_step = temp_food.mean(1)
+    pop_per_time_step = temp_population.mean(1)
+    q.put((food_per_time_step, pop_per_time_step))
+
+
+def parameter_search2():
+    nr_threads = 8
+    p_cannibalise = np.linspace(0, 0.5, nr_threads)
+    food_source = 10
+    time_steps = 5000
+    queues = list()
+    processes = list()
+    save_food = np.zeros((len(p_cannibalise), time_steps))
+    save_pop = np.zeros((len(p_cannibalise), time_steps))
+    proc = 0
+
+    for j in range(nr_threads):
+        queues.append(Queue())
+        processes.append(Process(target=simulation_run2, args=(queues[j], food_source, time_steps, p_cannibalise[j])))
+    print("start")
+    # start processes
+    for j in range(nr_threads):
+        processes[j].start()
+    print("join")
+    # join processes
+    for j in range(nr_threads):
+        processes[j].join()
+
+    print("save")
+    # save values
+    for j in range(nr_threads):
+        print("j:", j)
+        output = queues[j].get()
+        save_food[j, :] = np.transpose(output[0])
+        save_pop[j, :] = np.transpose(output[1])
+        print("lal")
+    proc += 1
+    print(proc)
+    data = asarray(save_food)
+    savetxt(f'food_available_{time_steps}.csv', data, delimiter=',')
+    data = asarray(save_pop)
+    savetxt(f'population_{time_steps}.csv', data, delimiter=',')
 
 def plot_func():
     graphs.plot_surface()

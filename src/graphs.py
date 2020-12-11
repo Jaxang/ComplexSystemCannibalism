@@ -105,3 +105,43 @@ def plot_surface():
     ax.set_zlabel("Survived agents")
     ax.set_title("enter which values")
     plt.show()
+
+
+def plot_surface2():
+    nr_threads = 8
+    food = genfromtxt("food_available_100.csv", delimiter=",")
+    time_steps=food.shape[1]
+    p_cannibalise = np.linspace(0, 0.5, nr_threads)
+    time_steps = np.arange(time_steps)
+
+    fig = plt.figure()
+    ax = fig.gca(projection="3d")
+
+    X = time_steps
+    Y = p_cannibalise
+    X, Y = np.meshgrid(X, Y)
+    Z = food
+    surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, antialiased=True)
+    ax.set_xlabel("time steps")
+    ax.set_ylabel("p_cannibalise")
+    ax.set_zlabel("food_available")
+    ax.set_title("enter which values")
+    # ------------------------------------------------------
+    pop = genfromtxt("population_100.csv", delimiter=",")
+    time_steps = pop.shape[1]
+    p_cannibalise = np.linspace(0, 0.5, nr_threads)
+    time_steps = np.arange(time_steps)
+
+    fig = plt.figure()
+    ax = fig.gca(projection="3d")
+
+    X = time_steps
+    Y = p_cannibalise
+    X, Y = np.meshgrid(X, Y)
+    Z = pop
+    surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, antialiased=True)
+    ax.set_xlabel("time steps")
+    ax.set_ylabel("p_cannibalise")
+    ax.set_zlabel("food_available")
+    ax.set_title("enter which values")
+    plt.show()
