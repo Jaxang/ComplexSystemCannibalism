@@ -109,7 +109,11 @@ def plot_surface():
 
 def plot_surface2():
     nr_threads = 12
+<<<<<<< HEAD
     food = genfromtxt("src/food_available_5000.csv", delimiter=",")
+=======
+    food = genfromtxt("food_available_100.csv", delimiter=",")
+>>>>>>> c4bd8208baeb5c76134afc39c8cd2200c6b5c67f
     time_steps=food.shape[1]
     p_cannibalise = np.linspace(0, 0.5, nr_threads)
     time_steps = np.arange(time_steps)

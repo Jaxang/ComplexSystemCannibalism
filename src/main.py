@@ -356,18 +356,24 @@ def simulation_run2(q, food_supply, time_steps, p_cannibalise):
     temp_population = np.zeros((time_steps, nr_averages))
 
     for j in range(nr_averages):
+        print(f"pcan={p_cannibalise}, j={j}")
         output = lattice_model(False, food_supply, p_cannibalise, time_steps)
         temp_food[:, j] = np.array(output[1])
         temp_population[:, j] = np.array(output[2])
         print("average done: " , j)
     food_per_time_step = temp_food.mean(1)
     pop_per_time_step = temp_population.mean(1)
+<<<<<<< HEAD
     print("queue put")
+=======
+    print(f"pcan={p_cannibalise}, putting")
+>>>>>>> c4bd8208baeb5c76134afc39c8cd2200c6b5c67f
     q.put((food_per_time_step, pop_per_time_step))
+    print(f"pcan={p_cannibalise}, done")
 
 
 def parameter_search2():
-    nr_threads = 8
+    nr_threads = 12
     p_cannibalise = np.linspace(0, 0.5, nr_threads)
     food_source = 10
     time_steps = 5000
@@ -379,15 +385,11 @@ def parameter_search2():
 
     for j in range(nr_threads):
         queues.append(Queue())
-        processes.append(Process(target=simulation_run2, args=(queues[j], food_source, time_steps, p_cannibalise[j])))
+        processes.append(Process(target=simulation_run2, args=(queues[j], food_source, time_steps, p_cannibalise[j],)))
     print("start")
     # start processes
     for j in range(nr_threads):
         processes[j].start()
-    print("join")
-    # join processes
-    for j in range(nr_threads):
-        processes[j].join()
 
     print("save")
     # save values
@@ -397,6 +399,12 @@ def parameter_search2():
         save_food[j, :] = np.transpose(output[0])
         save_pop[j, :] = np.transpose(output[1])
         print("lal")
+
+    print("join")
+    # join processes
+    for j in range(nr_threads):
+        print(f"join {j}")
+        processes[j].join()
     proc += 1
     print(proc)
     data = asarray(save_food)
