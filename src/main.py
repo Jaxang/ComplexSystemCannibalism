@@ -272,6 +272,11 @@ def lattice_model(plot = True, init_food_supply = 30, p_cannibalise = 0.1, nr_ti
         population_size.append(len(population))
 
         # spawn new food
+        """if i == nr_time_steps//2:
+            food_supply = food_supply//2
+        elif i == (3*nr_time_steps)//4:
+            food_supply = init_food_supply//4"""
+
         x = np.random.randint(grid_size, size=int(food_supply))
         y = np.random.randint(grid_size, size=int(food_supply))
         for _x, _y in zip(x,y):
@@ -374,8 +379,8 @@ def simulation_run2(q, food_supply, time_steps, p_cannibalise):
 
 def parameter_search2():
     nr_threads = 12
-    p_cannibalise = np.linspace(0, 0.5, nr_threads)
-    food_source = 10
+    p_cannibalise = np.linspace(0, 0.2, nr_threads)
+    food_source = 12
     time_steps = 5000
     queues = list()
     processes = list()
@@ -408,9 +413,9 @@ def parameter_search2():
     proc += 1
     print(proc)
     data = asarray(save_food)
-    savetxt(f'food_available_{time_steps}.csv', data, delimiter=',')
+    savetxt(f'food_available_{time_steps}_short_0-2.csv', data, delimiter=',')
     data = asarray(save_pop)
-    savetxt(f'population_{time_steps}.csv', data, delimiter=',')
+    savetxt(f'population_{time_steps}_short_0-2.csv', data, delimiter=',')
 
 def plot_func():
     graphs.plot_surface()

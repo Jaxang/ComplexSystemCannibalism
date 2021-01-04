@@ -100,23 +100,19 @@ def plot_surface():
     X, Y = np.meshgrid(X, Y)
     Z = survivors
     surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, antialiased=True)
-    ax.set_xlabel("food supply")
-    ax.set_ylabel("p_cannibalism")
-    ax.set_zlabel("Survived agents")
-    ax.set_title("enter which values")
+    ax.set_xlabel("food supply", fontsize=15)
+    ax.set_ylabel("p_cannibalism", fontsize=15)
+    ax.set_zlabel("Survived agents", fontsize=15)
+    fig.suptitle("Number of alive agents after 1000 time steps", fontsize=20)
     plt.show()
 
 
 def plot_surface2():
     nr_threads = 12
-<<<<<<< HEAD
-    food = genfromtxt("src/food_available_5000.csv", delimiter=",")
-=======
-    food = genfromtxt("food_available_100.csv", delimiter=",")
->>>>>>> c4bd8208baeb5c76134afc39c8cd2200c6b5c67f
+    food = genfromtxt("food_available_5000_short_0-2.csv", delimiter=",")
     time_steps=food.shape[1]
-    p_cannibalise = np.linspace(0, 0.5, nr_threads)
-    time_steps = np.arange(time_steps)
+    p_cannibalise = np.linspace(0, 0.2, nr_threads)
+    time_steps = np.arange(time_steps)[2000:]
 
     fig = plt.figure()
     ax = fig.gca(projection="3d")
@@ -124,28 +120,90 @@ def plot_surface2():
     X = time_steps
     Y = p_cannibalise
     X, Y = np.meshgrid(X, Y)
-    Z = food
+    Z = food[:,2000:]
     surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, antialiased=True)
-    ax.set_xlabel("time steps")
-    ax.set_ylabel("p_cannibalise")
-    ax.set_zlabel("food_available")
-    ax.set_title("enter which values")
+    ax.set_xlabel("time steps", fontsize=15)
+    ax.set_ylabel("p_cannibalise", fontsize=15)
+    ax.set_zlabel("Food available", fontsize=15)
+    fig.suptitle("Food available with 12 food sources added each time step", fontsize=20)
     # ------------------------------------------------------
-    pop = genfromtxt("src/population_5000.csv", delimiter=",")
+    pop = genfromtxt("population_5000_short_0-2.csv", delimiter=",")
+    time_steps = pop.shape[1]
+    p_cannibalise = np.linspace(0, 0.2, nr_threads)
+    time_steps = np.arange(time_steps)[2000:]
+
+    fig = plt.figure()
+    ax = fig.gca(projection="3d")
+
+    X = time_steps
+    Y = p_cannibalise
+    X, Y = np.meshgrid(X, Y)
+    Z = pop[:,2000:]
+    surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, antialiased=True)
+    ax.set_xlabel("time steps", fontsize=15)
+    ax.set_ylabel("p_cannibalise", fontsize=15)
+    ax.set_zlabel("Population size", fontsize=15)
+    fig.suptitle("Population size during simulation with 12 food sources each time step", fontsize=20)
+    #-----------------------------------------------------
+    fig = plt.figure()
+    ax = fig.gca(projection="3d")
+
+    X = time_steps
+    Y = p_cannibalise
+    X, Y = np.meshgrid(X, Y)
+    Z = food[:,2000:]/pop[:,2000:]
+    surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, antialiased=True)
+    ax.set_xlabel("time steps", fontsize=15)
+    ax.set_ylabel("p_cannibalise", fontsize=15)
+    ax.set_zlabel("food per individual", fontsize=15)
+    fig.suptitle("Food per individual during simulation with 12 new food sources each time step", fontsize=20)
+    plt.show()
+
+def plot_surface3():
+    nr_threads = 12
+    food = genfromtxt("food_available_10000_double_half.csv", delimiter=",")
+    time_steps=food.shape[1]
+    p_cannibalise = np.linspace(0, 0.5, nr_threads)
+    time_steps = np.arange(time_steps)
+    subpic = [0, 1, 2, 6, 9, 11]
+    fig = plt.figure()
+
+    X = time_steps
+    Y = p_cannibalise
+    Z = food
+    for pic in subpic:
+        plt.plot(X, Z[pic, :], label="p_cannibalise={:.3f}".format(p_cannibalise[pic]))
+    plt.xlabel("time steps")
+    plt.ylabel("Food available")
+    plt.legend()
+    plt.title("Food available with 5 new food sources each time step.\n Lowered to 2 after 5000 time steps \n and 1 after 7500 time steps")
+    # ------------------------------------------------------
+    pop = genfromtxt("population_10000_double_half.csv", delimiter=",")
     time_steps = pop.shape[1]
     p_cannibalise = np.linspace(0, 0.5, nr_threads)
     time_steps = np.arange(time_steps)
 
     fig = plt.figure()
-    ax = fig.gca(projection="3d")
 
     X = time_steps
     Y = p_cannibalise
-    X, Y = np.meshgrid(X, Y)
     Z = pop
-    surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, antialiased=True)
-    ax.set_xlabel("time steps")
-    ax.set_ylabel("p_cannibalise")
-    ax.set_zlabel("food_available")
-    ax.set_title("enter which values")
+    for pic in subpic:
+        plt.plot(X, Z[pic, :], label="p_cannibalise={:.3f}".format(p_cannibalise[pic]))
+    plt.xlabel("time steps")
+    plt.ylabel("Population size")
+    plt.title("Food available with 5 new food sources each time step.\n Lowered to 2 after 5000 time steps \n and 1 after 7500 time steps")
+    plt.legend()
+    #-----------------------------------------------------
+    fig = plt.figure()
+
+    X = time_steps
+    Y = p_cannibalise
+    Z = food/pop
+    for pic in subpic:
+        plt.plot(X, Z[pic, :], label="p_cannibalise={:.3f}".format(p_cannibalise[pic]))
+    plt.xlabel("time steps")
+    plt.ylabel("food per individual")
+    plt.legend()
+    plt.title("Food available with 5 new food sources each time step.\n Lowered to 2 after 5000 time steps \n and 1 after 7500 time steps")
     plt.show()
